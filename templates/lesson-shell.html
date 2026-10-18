@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson chunks</title>
+<style>
+  :root{
+    --paper:#faf6ee; --card:#ffffff; --ink:#2b2620; --soft:#6d6157;
+    --line:#e4dccd; --accent:#a46447; --accent-deep:#4c362d;
+    --ok:#5c8a5c; --soft2:#efe8da;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{background:var(--paper); color:var(--ink);}
+  body{font-family:'Segoe UI', system-ui, -apple-system, Arial, sans-serif; line-height:1.55; font-size:17px;}
+  .app{max-width:760px; margin:0 auto; padding:20px 20px 90px;}
+  header.top{display:flex; align-items:center; justify-content:space-between; gap:14px; padding:6px 0 14px; border-bottom:2px solid var(--ink);}
+  .kicker{font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); font-weight:700;}
+  h1{font-size:24px; line-height:1.2; margin-top:2px;}
+  .subj{font-size:13px; color:var(--soft); margin-top:2px;}
+  .topbtns{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
+  button{font:inherit; cursor:pointer; border:1.5px solid var(--ink); background:var(--card); color:var(--ink); padding:7px 12px; border-radius:0;}
+  button:hover{background:var(--soft2);}
+  button.primary{background:var(--ink); color:var(--paper);}
+  button.primary:hover{background:var(--accent-deep);}
+  .progresswrap{margin:16px 0 10px;}
+  .progressbar{height:8px; background:var(--soft2); border:1px solid var(--line); position:relative;}
+  .progressbar>div{position:absolute; left:0; top:0; bottom:0; background:var(--accent); width:0; transition:width .25s;}
+  .progresslabel{font-size:12.5px; color:var(--soft); margin-top:6px; display:flex; justify-content:space-between;}
+
+  .chunk{background:var(--card); border:1.5px solid var(--line); padding:22px 22px 18px; margin-top:14px;}
+  .chunk h2{font-size:21px; line-height:1.25; margin-bottom:10px;}
+  .chunk .body{font-size:17.5px; line-height:1.65;}
+  .chunk .body p{margin:0 0 10px;}
+  .chunk .row{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; align-items:center;}
+  .timer{font-variant-numeric:tabular-nums; font-weight:700; font-size:15px; color:var(--accent-deep); min-width:56px;}
+  .dobox{margin-top:16px; border-top:1px dashed var(--line); padding-top:14px;}
+  .dobox .prompt{font-weight:700; margin-bottom:8px;}
+  textarea{width:100%; min-height:92px; font:inherit; font-size:16px; padding:10px 12px; border:1.5px solid var(--line); background:#fffdf8; color:var(--ink); border-radius:0; resize:vertical;}
+  textarea:focus{outline:2px solid var(--accent); border-color:var(--accent);}
+  .saved{font-size:12px; color:var(--ok); min-height:16px; margin-top:5px;}
+  .recall{margin-top:14px; background:#fff8ec; border-left:4px solid var(--accent); padding:10px 12px; font-size:15px;}
+
+  nav.bottom{position:fixed; left:0; right:0; bottom:0; background:var(--paper); border-top:1.5px solid var(--ink); padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .dots{display:flex; gap:6px; flex-wrap:wrap; justify-content:center;}
+  .dot{width:26px; height:26px; border:1.5px solid var(--ink); background:var(--card); font-size:12.5px; padding:0; color:var(--ink);}
+  .dot.active{background:var(--ink); color:var(--paper);}
+  .dot.done{border-color:var(--accent); color:var(--accent);}
+  .dot.active.done{background:var(--accent); color:#fff; border-color:var(--accent);}
+
+  .glossary{margin-top:26px; border-top:2px solid var(--ink); padding-top:14px;}
+  .glossary h3{font-size:16px; margin-bottom:8px;}
+  .glossary ul{list-style:none;}
+  .glossary li{font-size:15px; margin-bottom:6px;}
+  .glossary b{color:var(--accent-deep);}
+  .quiz{margin-top:26px; border-top:2px solid var(--ink); padding-top:14px;}
+  .quiz ol{padding-left:22px;}
+  .quiz li{margin-bottom:8px;}
+  .footnote{margin-top:26px; font-size:12.5px; color:var(--soft);}
+
+  #printall{display:none;}
+  @media print{
+    .app, nav.bottom{display:none !important;}
+    #printall{display:block; font-size:12pt;}
+    #printall h1{font-size:18pt; margin-bottom:4pt;}
+    #printall .pc{margin:0 0 14pt 0; page-break-inside:avoid;}
+    #printall .pc h2{font-size:13pt; margin-bottom:3pt;}
+    #printall .pc .pd{color:#555; font-size:10pt; margin-top:3pt;}
+    #printall .lines{border-bottom:1px solid #999; height:18pt; margin-top:8pt;}
+    body{background:#fff; color:#000;}
+  }
+  @media (max-width:560px){
+    body{font-size:16px;}
+    .app{padding:14px 14px 96px;}
+    h1{font-size:20px;}
+    .dots{display:none;}
+    nav.bottom{justify-content:space-between;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div>
+      <div class="kicker">Lesson chunks</div>
+      <h1 id="lesson-title">Lesson</h1>
+      <div class="subj" id="lesson-subj"></div>
+    </div>
+    <div class="topbtns">
+      <button id="btn-print" type="button">Print</button>
+      <button id="btn-download" type="button">Download answers</button>
+    </div>
+  </header>
+
+  <div class="progresswrap">
+    <div class="progressbar"><div id="pb"></div></div>
+    <div class="progresslabel"><span id="plabel">Chunk 1 of 1</span><span id="ptime"></span></div>
+  </div>
+
+  <main id="chunkview"></main>
+
+  <section class="glossary" id="glossary"></section>
+  <section class="quiz" id="quiz"></section>
+
+  <p class="footnote">Answers save in this browser only. This file works offline. Built for young people who learn better in small steps.</p>
+</div>
+
+<nav class="bottom">
+  <button id="btn-prev" type="button">&#8592; Back</button>
+  <div class="dots" id="dots"></div>
+  <button id="btn-next" class="primary" type="button">Next &#8594;</button>
+</nav>
+
+<div id="printall"></div>
+
+<script id="lesson-data" type="application/json">__LESSON_DATA__</script>
+<script>
+(function(){
+  var D = JSON.parse(document.getElementById('lesson-data').textContent);
+  if (!D || !D.chunks || !D.chunks.length) { document.getElementById('chunkview').textContent = 'No lesson data.'; return; }
+  var total = D.chunks.length, cur = 0;
+  var KEY = 'lessonchunks.' + (D.slug || 'lesson');
+  var store = {};
+  try { store = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ store = {}; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(store)); } catch(e){} }
+
+  document.title = D.title + ' - lesson chunks';
+  document.getElementById('lesson-title').textContent = D.title || 'Lesson';
+  document.getElementById('lesson-subj').textContent = (D.subject || '');
+
+  var dots = document.getElementById('dots');
+  for (var i = 0; i < total; i++){
+    var b = document.createElement('button');
+    b.className = 'dot'; b.type = 'button'; b.textContent = (i+1);
+    b.setAttribute('aria-label', 'Go to chunk ' + (i+1));
+    (function(n){ b.onclick = function(){ go(n); }; })(i);
+    dots.appendChild(b);
+  }
+
+  function par(text){
+    return String(text || '').split(/\n{2,}/).map(function(p){
+      return '<p>' + p.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,' ').trim() + '</p>';
+    }).join('');
+  }
+
+  function render(){
+    var c = D.chunks[cur];
+    var view = document.getElementById('chunkview');
+    var recall = c.recall ? '<div class="recall"><b>Quick recall:</b> ' + c.recall + '</div>' : '';
+    var saved = (store[c.id] && store[c.id].answer) ? 'Saved' : '';
+    view.innerHTML =
+      '<article class="chunk">' +
+        '<h2>' + (c.title || ('Chunk ' + (cur+1))) + '</h2>' +
+        '<div class="body">' + par(c.body) + '</div>' +
+        recall +
+        '<div class="row">' +
+          '<button id="btn-tts" type="button">Read aloud</button>' +
+          '<button id="btn-timer" type="button">Start timer</button>' +
+          '<span class="timer" id="timer">00:00</span>' +
+        '</div>' +
+        '<div class="dobox">' +
+          '<div class="prompt">Your turn: ' + (c['do'] || '') + '</div>' +
+          '<textarea id="answer" placeholder="Write your answer here. It saves as you type."></textarea>' +
+          '<div class="saved" id="saved"></div>' +
+        '</div>' +
+      '</article>';
+
+    var ta = document.getElementById('answer');
+    ta.value = (store[c.id] && store[c.id].answer) || '';
+    document.getElementById('saved').textContent = saved ? 'Saved in this browser' : '';
+    ta.addEventListener('input', function(){
+      store[c.id] = store[c.id] || {};
+      store[c.id].answer = ta.value;
+      save();
+      document.getElementById('saved').textContent = 'Saved in this browser';
+    });
+
+    // TTS
+    document.getElementById('btn-tts').onclick = function(){
+      if (!('speechSynthesis' in window)) { alert('This browser has no read-aloud voice.'); return; }
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(c.title + '. ' + c.body);
+      u.rate = 0.95;
+      window.speechSynthesis.speak(u);
+    };
+
+    // timer
+    var tEl = document.getElementById('timer');
+    var t = store[c.id] && store[c.id].seconds ? store[c.id].seconds : 0;
+    var iv = null;
+    function fmt(s){ var m = Math.floor(s/60), x = s%60; return (m<10?'0':'')+m+':'+(x<10?'0':'')+x; }
+    tEl.textContent = fmt(t);
+    document.getElementById('btn-timer').onclick = function(){
+      if (iv){ clearInterval(iv); iv = null; this.textContent = 'Start timer'; return; }
+      this.textContent = 'Pause';
+      iv = setInterval(function(){
+        t++; tEl.textContent = fmt(t);
+        store[c.id] = store[c.id] || {}; store[c.id].seconds = t; save();
+      }, 1000);
+    };
+
+    document.getElementById('plabel').textContent = 'Chunk ' + (cur+1) + ' of ' + total;
+    document.getElementById('pb').style.width = Math.round(((cur+1)/total)*100) + '%';
+    document.getElementById('ptime').textContent = c.meta && c.meta.minutes ? ('about ' + c.meta.minutes + ' min') : '';
+    document.getElementById('btn-prev').disabled = (cur === 0);
+    document.getElementById('btn-next').disabled = (cur === total-1);
+    updateDots();
+    window.scrollTo(0, 0);
+  }
+
+  function updateDots(){
+    var ds = dots.querySelectorAll('.dot');
+    for (var i = 0; i < ds.length; i++){
+      ds[i].className = 'dot' + (i === cur ? ' active' : '');
+      var id = D.chunks[i].id;
+      if (store[id] && store[id].answer) ds[i].className += ' done';
+    }
+  }
+
+  function go(n){
+    if (n < 0 || n >= total) return;
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    cur = n; render();
+  }
+
+  document.getElementById('btn-prev').onclick = function(){ go(cur-1); };
+  document.getElementById('btn-next').onclick = function(){ go(cur+1); };
+  document.addEventListener('keydown', function(e){
+    if (e.target && e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight') go(cur+1);
+    if (e.key === 'ArrowLeft') go(cur-1);
+  });
+
+  // glossary
+  if (D.vocab && D.vocab.length){
+    var g = document.getElementById('glossary');
+    g.innerHTML = '<h3>Words to know</h3><ul>' + D.vocab.map(function(v){
+      return '<li><b>' + v.term + '</b>: ' + v.definition + '</li>';
+    }).join('') + '</ul>';
+  } else {
+    document.getElementById('glossary').style.display = 'none';
+  }
+
+  // quiz
+  if (D.quiz && D.quiz.length){
+    var q = document.getElementById('quiz');
+    q.innerHTML = '<h3>Before the test: ' + D.quiz.length + ' quick questions</h3><ol>' +
+      D.quiz.map(function(x){ return '<li>' + x.q + '</li>'; }).join('') + '</ol>';
+  } else {
+    document.getElementById('quiz').style.display = 'none';
+  }
+
+  // download answers
+  document.getElementById('btn-download').onclick = function(){
+    var lines = [D.title + ' - my answers', ''];
+    D.chunks.forEach(function(c, i){
+      var a = (store[c.id] && store[c.id].answer) || '';
+      lines.push('Chunk ' + (i+1) + ': ' + (c.title||''));
+      lines.push('Q: ' + (c['do']||''));
+      lines.push('A: ' + a.trim());
+      lines.push('');
+    });
+    var blob = new Blob([lines.join('\n')], {type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (D.slug || 'lesson') + '-answers.txt';
+    a.click(); URL.revokeObjectURL(a.href);
+  };
+
+  // print
+  window.addEventListener('beforeprint', function(){
+    var p = document.getElementById('printall');
+    var html = '<h1>' + (D.title||'') + '</h1><div>' + (D.subject||'') + '</div>';
+    D.chunks.forEach(function(c, i){
+      var a = (store[c.id] && store[c.id].answer) || '';
+      html += '<div class="pc"><h2>' + (i+1) + '. ' + (c.title||'') + '</h2>' +
+        par(c.body).replace(/<p>/g,'<p style="font-size:11pt;line-height:1.4">') +
+        '<div class="pd">Task: ' + (c['do']||'') + '</div>';
+      if (a.trim()) { html += '<div style="margin-top:4pt;font-size:11pt"><b>Answer:</b> ' + a.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</div>'; }
+      else { html += '<div class="lines"></div><div class="lines"></div>'; }
+      html += '</div>';
+    });
+    p.innerHTML = html;
+  });
+  document.getElementById('btn-print').onclick = function(){ window.print(); };
+
+  render();
+})();
+</script>
+</body>
+</html>
