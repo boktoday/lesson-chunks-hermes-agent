@@ -40,7 +40,7 @@ One idea, made finishable. A chunk is the smallest unit a young person can read,
 | Rule | Limit |
 |---|---|
 | Chunks per lesson | 5 to 12 |
-| Body length | 90 words maximum, 60 typical |
+| Body length | 90 words maximum, 60 typical (profile `chunk_words` may lower the cap to 60-75 for small screen load; never raise it) |
 | Sentence length | 15 words maximum |
 | Sentences per chunk | 2 to 5 |
 | Chunk title | 5 words maximum, literal |
