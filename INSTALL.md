@@ -30,6 +30,10 @@ Edit `profile.yaml`: set `model.default` and `model.provider` to whatever you ru
 hermes --profile lesson-chunks
 ```
 
+First run starts with the onboarding questions (skills/onboarding). Answer or skip; it writes `shared/profile.json`.
+
+If the family wants spoken chunks, run the `setup-audio` skill: one `pip install piper-tts`, one voice download (~63MB), one test sentence. Then `scripts/narrate-lesson.py` adds audio to every lesson and `build-lesson.py` embeds it.
+
 Try: "Here is a lesson, chunk it for me:" then paste a few paragraphs. You should get a plan, then chunks, then a working `lesson.html` in `shared/lessons/<slug>/`.
 
 ## 5. Scheduling (optional)
