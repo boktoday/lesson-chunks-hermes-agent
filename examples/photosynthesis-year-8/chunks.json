@@ -1,0 +1,64 @@
+{
+  "slug": "photosynthesis-year-8",
+  "title": "Photosynthesis",
+  "subject": "Science, Year 8",
+  "for": "young person, 13-23",
+  "created": "2026-10-18",
+  "source_note": "sample lesson supplied with the repo (docs/format-spec.md demonstration)",
+  "vocab": [
+    {"term": "photosynthesis", "definition": "the process plants use to turn light, water and air into food"},
+    {"term": "chlorophyll", "definition": "the green pigment that catches light in a leaf"},
+    {"term": "chloroplast", "definition": "the small structure inside a leaf cell where photosynthesis happens"},
+    {"term": "stomata", "definition": "tiny holes in a leaf that let gases move in and out"},
+    {"term": "glucose", "definition": "the sugar a plant makes and uses for energy and growth"}
+  ],
+  "chunks": [
+    {
+      "id": 1,
+      "title": "Why plants make food",
+      "body": "Plants cannot eat. So they build their own food using light, water and air. This process is called photosynthesis. It happens mostly in the leaves. You are about to learn the inputs, the machine and the outputs.",
+      "do": "In one sentence: why does a plant need photosynthesis?",
+      "recall": null,
+      "meta": {"words": 41, "minutes": 2}
+    },
+    {
+      "id": 2,
+      "title": "The three inputs",
+      "body": "Photosynthesis needs three inputs. Light is caught by the leaf. Water is pulled up from the roots. Carbon dioxide enters through tiny holes called stomata. No input, no process: all three are needed at the same time.",
+      "do": "Name the three inputs of photosynthesis from memory, then check.",
+      "recall": "Where does photosynthesis mostly happen?",
+      "meta": {"words": 44, "minutes": 2}
+    },
+    {
+      "id": 3,
+      "title": "Chlorophyll catches light",
+      "body": "Leaves contain a green pigment called chlorophyll. Chlorophyll absorbs mostly red and blue light. It reflects green light, and that is why leaves look green. The pigment sits inside small structures called chloroplasts.",
+      "do": "Why do leaves look green? Answer in one sentence.",
+      "recall": "Name one of the three inputs that enters through the stomata.",
+      "meta": {"words": 43, "minutes": 2}
+    },
+    {
+      "id": 4,
+      "title": "What comes out",
+      "body": "The plant uses light energy to join water and carbon dioxide. The result is glucose, a sugar the plant uses for energy and growth. Oxygen is released as a waste product. The oxygen leaves the leaf through the stomata.",
+      "do": "List the two outputs of photosynthesis.",
+      "recall": "What is the green pigment inside a leaf called?",
+      "meta": {"words": 46, "minutes": 2}
+    },
+    {
+      "id": 5,
+      "title": "Put it together",
+      "body": "Photosynthesis turns light energy into chemical energy stored in glucose. Inputs: light, water, carbon dioxide. Outputs: glucose and oxygen. It happens in the chloroplasts of leaf cells. Word equation: carbon dioxide + water, with light and chlorophyll, gives glucose + oxygen.",
+      "do": "Cover the page and write the word equation from memory.",
+      "recall": "Name the two outputs you learned in chunk 4.",
+      "meta": {"words": 47, "minutes": 3}
+    }
+  ],
+  "quiz": [
+    {"q": "Name the three inputs of photosynthesis.", "source_chunk": 2},
+    {"q": "Which structure inside the leaf cell does the work?", "source_chunk": 3},
+    {"q": "Why are leaves green?", "source_chunk": 3},
+    {"q": "What are the two outputs?", "source_chunk": 4},
+    {"q": "Write the word equation for photosynthesis.", "source_chunk": 5}
+  ]
+}
