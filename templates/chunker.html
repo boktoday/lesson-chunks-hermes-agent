@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson chunker (no AI)</title>
+<style>
+  :root{--paper:#faf6ee; --card:#fff; --ink:#2b2620; --soft:#6d6157; --line:#e4dccd; --accent:#a46447;}
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:'Segoe UI', system-ui, Arial, sans-serif; line-height:1.55; font-size:17px;}
+  .wrap{max-width:760px; margin:0 auto; padding:24px 20px 80px;}
+  h1{font-size:24px; margin-bottom:4px;}
+  .note{font-size:13.5px; color:var(--soft); margin-bottom:16px;}
+  textarea{width:100%; min-height:200px; font:inherit; padding:12px; border:1.5px solid var(--line); background:#fff; border-radius:0;}
+  .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:14px 0;}
+  button{font:inherit; cursor:pointer; border:1.5px solid var(--ink); background:var(--card); padding:8px 14px; border-radius:0;}
+  button.primary{background:var(--ink); color:var(--paper);}
+  .chunk{background:var(--card); border:1.5px solid var(--line); padding:20px; margin-top:14px;}
+  .chunk h2{font-size:19px; margin-bottom:8px;}
+  .chunk p{margin-bottom:8px;}
+  .chunk .do{font-weight:700; margin-top:10px;}
+  .chunk textarea{min-height:70px; margin-top:6px;}
+  .timer{font-variant-numeric:tabular-nums; font-weight:700; color:var(--accent);}
+  .meta{font-size:12.5px; color:var(--soft);}
+  @media print{ .wrap>form, .row, button{display:none;} body{background:#fff;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Lesson chunker</h1>
+  <div class="note">Paste a lesson or reading. This page splits it into chunks of about 90 words and builds a simple practice sheet. It does not rewrite or simplify the language (that needs the AI agent). Everything stays in your browser.</div>
+  <form id="f">
+    <textarea id="src" placeholder="Paste the lesson text here..."></textarea>
+    <div class="row">
+      <button type="submit" class="primary">Split into chunks</button>
+      <button type="button" id="clr">Clear</button>
+    </div>
+  </form>
+  <div id="out"></div>
+</div>
+<script>
+(function(){
+  var f = document.getElementById('f'), src = document.getElementById('src'), out = document.getElementById('out');
+  function words(s){ return s.trim().split(/\s+/).filter(Boolean).length; }
+  function split(text){
+    var paras = text.split(/\n{2,}/).map(function(p){ return p.trim(); }).filter(Boolean);
+    var chunks = [], cur = [];
+    function flush(){
+      if (cur.length){ chunks.push(cur.join('\n\n')); cur = []; }
+    }
+    paras.forEach(function(p){
+      var w = words(p);
+      if (w > 90){
+        flush();
+        // split long paragraph into sentence groups under 90 words
+        var sents = p.split(/(?<=[.!?])\s+/);
+        var group = [];
+        sents.forEach(function(s){
+          if (words(group.concat([s]).join(' ')) > 90 && group.length){ chunks.push(group.join(' ')); group = []; }
+          group.push(s);
+        });
+        if (group.length) chunks.push(group.join(' '));
+      } else {
+        if (words(cur.concat([p]).join(' ')) > 90){ flush(); }
+        cur.push(p);
+      }
+    });
+    flush();
+    return chunks;
+  }
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var text = src.value.trim();
+    if (!text){ out.innerHTML = ''; return; }
+    var chunks = split(text);
+    var html = '<div class="row"><span class="meta">' + chunks.length + ' chunks. Answers save in this browser.</span></div>';
+    chunks.forEach(function(c, i){
+      var w = words(c), mins = Math.max(1, Math.round(w/40));
+      html += '<article class="chunk" id="c' + i + '">' +
+        '<h2>Chunk ' + (i+1) + ' of ' + chunks.length + ' (' + mins + ' min)</h2>' +
+        c.split(/\n{2,}/).map(function(p){ return '<p>' + p.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</p>'; }).join('') +
+        '<div class="row"><button type="button" onclick="window.__tts(' + i + ')">Read aloud</button>' +
+        '<button type="button" onclick="window.__timer(this,' + i + ')">Start timer</button>' +
+        '<span class="timer" id="t' + i + '">00:00</span></div>' +
+        '<div class="do">Your turn: write one sentence that captures the main point of this chunk.</div>' +
+        '<textarea id="a' + i + '" oninput="window.__save(' + i + ', this.value)"></textarea>' +
+        '</article>';
+    });
+    out.innerHTML = html;
+    for (var i = 0; i < chunks.length; i++){
+      var ta = document.getElementById('a' + i);
+      try { ta.value = JSON.parse(localStorage.getItem('chunker') || '{}')[i] || ''; } catch(e){}
+    }
+  });
+  document.getElementById('clr').onclick = function(){
+    src.value = ''; out.innerHTML = '';
+    try { localStorage.removeItem('chunker'); } catch(e){}
+  };
+  window.__save = function(i, v){
+    var st = {};
+    try { st = JSON.parse(localStorage.getItem('chunker') || '{}'); } catch(e){}
+    st[i] = v;
+    try { localStorage.setItem('chunker', JSON.stringify(st)); } catch(e){}
+  };
+  window.__tts = function(i){
+    var c = document.getElementById('c' + i);
+    if (!('speechSynthesis' in window)) { alert('No read-aloud voice in this browser.'); return; }
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(c.textContent.replace(/Read aloud|Start timer|Your turn.*/g,''));
+    window.speechSynthesis.speak(u);
+  };
+  window.__timer = function(btn, i){
+    var el = document.getElementById('t' + i);
+    if (btn.__iv){ clearInterval(btn.__iv); btn.__iv = null; btn.textContent = 'Start timer'; return; }
+    btn.textContent = 'Pause';
+    var t = parseInt(el.textContent.split(':')[0], 10)*60 + parseInt(el.textContent.split(':')[1], 10);
+    btn.__iv = setInterval(function(){
+      t++;
+      var m = Math.floor(t/60), s = t%60;
+      el.textContent = (m<10?'0':'')+m + ':' + (s<10?'0':'')+s;
+    }, 1000);
+  };
+})();
+</script>
+</body>
+</html>
