@@ -1,0 +1,23 @@
+# config.yaml
+# Merge into the lesson-chunks profile config. Nothing here is mandatory beyond model.
+model:
+  # Any provider Hermes supports. A cheap fast model handles chunking well;
+  # reach for a stronger model for dense documents.
+  default: deepseek-v4-flash
+  provider: openrouter
+fallback_providers:
+  - provider: opencode
+    model: deepseek-v4-flash
+
+# Fully local alternative (see docs/local-models.md):
+# model:
+#   provider: ollama
+#   default: qwen3-8b-instruct
+
+cron:
+  model: deepseek-v4-flash
+  model_provider: openrouter
+
+gateway:
+  # Telegram (or WhatsApp where connected) is how scheduled chunks reach the young person.
+  channels: [telegram]
