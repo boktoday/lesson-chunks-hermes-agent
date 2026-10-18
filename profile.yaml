@@ -1,0 +1,10 @@
+# profile.yaml
+# Place in the lesson-chunks profile root and edit.
+name: lesson-chunks
+display_name: Lesson Chunks Agent
+description: Turns lessons into chunked, accessible steps; builds interactive HTML; can schedule spaced delivery.
+soul: SOUL.md
+agents: AGENTS.md
+skills_dir: skills
+workspace: shared/lessons
+default_channel: local
