@@ -30,6 +30,18 @@ def main(argv):
     if len(chunks) < 5:
         print("WARNING: fewer than 5 chunks (spec says 5 to 12)")
 
+    # optional narration produced by narrate-lesson.py
+    amap_file = src.parent / "audio-map.json"
+    if amap_file.exists():
+        amap = json.loads(amap_file.read_text(encoding="utf-8"))
+        for c in chunks:
+            key = str(c.get("id"))
+            if key in amap:
+                c["audio"] = amap[key]
+        if "full" in amap:
+            data["audio_full"] = amap["full"]
+        print("audio: %d chunk files + full track" % len([c for c in chunks if c.get("audio")]))
+
     shell = TEMPLATE.read_text(encoding="utf-8")
     if PLACEHOLDER not in shell:
         print("ERROR: template placeholder missing")
