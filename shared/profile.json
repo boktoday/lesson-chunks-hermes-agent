@@ -1,0 +1,11 @@
+{
+  "learner": {"name": "", "year": "", "answers_for": "young person"},
+  "reading": {"comfort": "unknown", "screen_load": "unknown", "hardest_time": "unknown"},
+  "preferences": {
+    "chunk_words": 90,
+    "audio": {"enabled": false, "voice": "", "speed": 0.95},
+    "delivery": {"channel": "local", "time": "07:30", "cadence": "ask each time"},
+    "tone": "plain, kind, no cheerleading"
+  },
+  "school_words": {"support": "", "meeting": "", "goal": ""}
+}
