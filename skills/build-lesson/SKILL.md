@@ -10,7 +10,7 @@ Turn `chunks.json` into one self-contained `lesson.html`.
 
 ## Do
 
-1. Confirm `quality-gate` passed (check the note in `plan.md`).
+1. Confirm `quality-gate` passed (check the note in `plan.md`). If the profile enables audio and Piper is installed, offer narration first: `python scripts/narrate-lesson.py shared/lessons/<slug>/chunks.json --voice <profile voice>` (creates audio/ + audio-map.json).
 2. Run the build:
 
 ```bash
