@@ -19,6 +19,8 @@ The idea comes from the Lesson Chunks AI app (lessonchunks.distinctoapps.com): c
 - The app waits to be opened. The agent **knocks**: spaced delivery, retrieval practice and a pre-test sweep are built in.
 - Runs **local-first**; every AI step works with frontier models online when you want them.
 
+**Try it without installing anything:** [live demo of the Photosynthesis example](https://boktoday.github.io/lesson-chunks-hermes-agent/demo/lesson.html) (the same file the agent builds: navigation, timer, read-aloud, autosaving answers, print).
+
 ## Quick start
 
 ```bash
