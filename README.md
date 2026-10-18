@@ -6,11 +6,12 @@ The idea comes from the Lesson Chunks AI app (lessonchunks.distinctoapps.com): c
 
 ## What it does
 
+0. **Onboard** once: how reading feels, how much screen feels right, audio or not, where deliveries should go. Ten minutes, skippable, never a diagnosis.
 1. **Ingest** any source: pasted text, a photo of a page, a PDF or a Word document.
 2. **Plan** the chunks: 5 to 12 steps, one idea each, in an order that builds.
 3. **Write** each chunk to a strict format spec: short sentences, under 90 words, one task per chunk, new terms defined as they appear.
 4. **Gate** the result through automated quality checks: word caps, sentence length, reading level, jargon, chunk completeness.
-5. **Build** a single self-contained `lesson.html` with chunk navigation, a per-chunk timer, text-to-speech, answer boxes that autosave, and clean printing.
+5. **Build** a single self-contained `lesson.html` with chunk navigation, a per-chunk timer, text-to-speech, answer boxes that autosave, and clean printing. Optionally **narrate it with Piper**: real audio per chunk plus a full-document track, generated on your own machine.
 6. **Schedule** the whole set for spaced delivery in Telegram (or WhatsApp where connected): one chunk per message, a recall question from earlier chunks, and a five-question sweep before the test date.
 
 ## Why an agent and not just the app
@@ -35,13 +36,14 @@ Then: "Here's a lesson, chunk it for me", or paste a document. The agent creates
 ## Project structure
 
 ```
-skills/          eight skills: ingest, chunk-plan, chunk-write, quality-gate,
-                 build-lesson, schedule-lesson, deliver-chunk, qa-tutor
+skills/          ten skills: onboarding, setup-audio, ingest, chunk-plan, chunk-write,
+                 quality-gate, build-lesson, schedule-lesson, deliver-chunk, qa-tutor
 templates/       lesson-shell.html (interactive single-file lesson)
                  chunker.html (browser-only splitter, no AI needed)
 scripts/         build-lesson.py (chunks.json -> lesson.html)
+                 narrate-lesson.py (Piper: chunk audio + full-document track)
 schedules/       lesson-delivery.md (cron pattern for spaced delivery)
-shared/lessons/  one folder per lesson: source/, chunks.json, answers.md, lesson.html
+shared/          profile.json (the learner's preferences) + lessons/ (one folder per lesson)
 docs/            format-spec.md, design.md, local-models.md
 ```
 
