@@ -34,6 +34,7 @@
   .chunk .body p{margin:0 0 10px;}
   .chunk .row{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; align-items:center;}
   .timer{font-variant-numeric:tabular-nums; font-weight:700; font-size:15px; color:var(--accent-deep); min-width:56px;}
+  audio{width:100%; max-width:340px; height:36px; margin-top:2px;}
   .dobox{margin-top:16px; border-top:1px dashed var(--line); padding-top:14px;}
   .dobox .prompt{font-weight:700; margin-bottom:8px;}
   textarea{width:100%; min-height:92px; font:inherit; font-size:16px; padding:10px 12px; border:1.5px solid var(--line); background:#fffdf8; color:var(--ink); border-radius:0; resize:vertical;}
@@ -87,6 +88,7 @@
       <div class="subj" id="lesson-subj"></div>
     </div>
     <div class="topbtns">
+      <button id="btn-listen" type="button">Listen to all</button>
       <button id="btn-print" type="button">Print</button>
       <button id="btn-download" type="button">Download answers</button>
     </div>
@@ -154,7 +156,8 @@
         '<div class="body">' + par(c.body) + '</div>' +
         recall +
         '<div class="row">' +
-          '<button id="btn-tts" type="button">Read aloud</button>' +
+          (c.audio ? ('<audio id="aplayer" controls preload="none" src="' + c.audio + '"></audio>') : '') +
+          '<button id="btn-tts" type="button">' + (c.audio ? 'Read in this browser' : 'Read aloud') + '</button>' +
           '<button id="btn-timer" type="button">Start timer</button>' +
           '<span class="timer" id="timer">00:00</span>' +
         '</div>' +
@@ -220,6 +223,9 @@
   function go(n){
     if (n < 0 || n >= total) return;
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    var ap = document.getElementById('aplayer');
+    if (ap) ap.pause();
+    if (window.__fullAudio) { window.__fullAudio.pause(); window.__fullAudio = null; }
     cur = n; render();
   }
 
@@ -283,6 +289,34 @@
     p.innerHTML = html;
   });
   document.getElementById('btn-print').onclick = function(){ window.print(); };
+
+  // listen to the whole lesson: full track if narrated, otherwise browser voice through every chunk
+  document.getElementById('btn-listen').onclick = function(){
+    var btn = this;
+    if (window.__fullAudio){ window.__fullAudio.pause(); window.__fullAudio = null; btn.textContent = 'Listen to all'; return; }
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    var ap = document.getElementById('aplayer'); if (ap) ap.pause();
+    if (D.audio_full){
+      var a = new Audio(D.audio_full);
+      window.__fullAudio = a;
+      a.onended = function(){ window.__fullAudio = null; btn.textContent = 'Listen to all'; };
+      a.play();
+      btn.textContent = 'Stop listening';
+      return;
+    }
+    if (!('speechSynthesis' in window)) { alert('No read-aloud voice in this browser.'); return; }
+    var i = 0;
+    btn.textContent = 'Stop listening';
+    function next(){
+      if (i >= total){ btn.textContent = 'Listen to all'; return; }
+      var c = D.chunks[i];
+      var u = new SpeechSynthesisUtterance(c.title + '. ' + c.body);
+      u.rate = 0.95;
+      u.onend = function(){ i++; setTimeout(next, 700); };
+      window.speechSynthesis.speak(u);
+    }
+    next();
+  };
 
   render();
 })();
