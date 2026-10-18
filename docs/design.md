@@ -43,3 +43,9 @@ Rules: front-load roughly 60 percent of chunks, one per day maximum per lesson, 
 - No accounts, no cloud sync, no analytics.
 - No assessment generation. qa-tutor explains; it does not write the essay.
 - No gamification: encourage with a line ("Chunk 3 of 7 done"), never with points, streaks or badges. (The IEP family agent carries that pattern for families who want it; here it would add load.)
+
+## Narration (local audio)
+
+`narrate-lesson.py` renders one WAV per chunk plus a full-document track with Piper (default voice `en_GB-alba-medium`, adjustable in the profile). The build embeds `audio` per chunk and `audio_full`, so the player gets a native audio control per chunk and a Listen to all button. The browser voice remains the fallback: the lesson file is complete without any audio files.
+
+Researched Oct 2026: Piper stays the CPU default (roughly 33x real-time, one pip install, ~63MB per voice, runs on a Pi 4). Kokoro-82M (Apache-2.0) is the naturalness upgrade at ~86MB int8 but wants a modern core; KittenTTS nano (24MB) is the smallest; Supertonic 3 covers 31 languages. Piece to remember: Piper's own licence moved to GPL-3.0 (Open Home Foundation); that governs shipping Piper itself, not the audio it generates.
